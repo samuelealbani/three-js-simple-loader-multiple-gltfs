@@ -13,10 +13,8 @@
 //import three.js
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';//camera controls
-import { GUI } from 'three/addons/libs/lil-gui.module.min.js';//Dat Gui
 import Stats from 'three/examples/jsm/libs/stats.module';//frame rate and other stats
 
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { loadGltfs } from './loadGltfs.js';
 const manager = new THREE.LoadingManager(); // loading manager - https://threejs.org/docs/#api/en/loaders/managers/LoadingManager
 
@@ -38,7 +36,14 @@ manager.onProgress = function (url, itemsLoaded, itemsTotal) {
 };
 manager.onLoad = function () {
   console.log('Loading complete!');
-  setTimeout(function () { document.getElementById("loading").classList.add("hidden"); }, 1000);
+  //Use Timeouts sparingly
+  //If you do use a lot of them always assign them to a variable so you can clear them if needed
+  //https://www.w3schools.com/jsref/met_win_settimeout.asp
+  //Remove loader after a second
+  setTimeout(function () { 
+    document.getElementById("loading").classList.add("hidden"); 
+  }, 1000);
+  //Or instead use this to remove it immediately
   // document.getElementById("loading").classList.add("hidden");
 };
 manager.onError = function (url) {
@@ -50,6 +55,8 @@ let gui, stats, gridHelper;
 
 let models = {};
 
+//Using await so that we only run init after preload is done
+//https://www.geeksforgeeks.org/difference-between-promise-and-async-await-in-node-js/
 async function preload() {
   models = await loadGltfs(manager);
   console.log('end of preload');
@@ -85,26 +92,17 @@ function init() {
   // const dirLightHelper = new THREE.DirectionalLightHelper( dirLight, 10 );
   // scene.add( dirLightHelper );
 
-
-  gui = new GUI({ name: 'My GUI' });
-
-  //Put your glb files (all static assets) in the public folder
-  new GLTFLoader()
-    .setPath('models/')
-    .load('SheenChair.glb', function (gltf) {
-
-      // scene.add( gltf.scene );
-
-      const object = gltf.scene.getObjectByName('SheenChair_fabric');
-
-      gui.add(object.material, 'sheen', 0, 1);
-      gui.open();
-
-    });
-
+  //What is models, it's an object of objects. console log it out to look at how it is structured
+  console.log("models object: ", models);
+  
   // add loaded models to scene
   for (let mod in models) {
-    scene.add(models[mod].scene);
+    //mod is the name of the javascript object key for each gltf we loaded in
+    console.log("Models key name: ", mod);
+
+    let gltfScene = models[mod].scene;
+    scene.add(gltfScene);//add every model gltf scene
+
   }
 
 
@@ -119,9 +117,6 @@ function init() {
   //add event listener, when window is resized call onWindowResize callback
   window.addEventListener('resize', onWindowResize);
   window.addEventListener('keydown', onKeyDown);
-  //https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
-  //https://www.w3schools.com/js/js_htmldom_eventlistener.asp
-  //https://www.w3schools.com/js/js_htmldom_events.asp
 }
 
 function animate() {

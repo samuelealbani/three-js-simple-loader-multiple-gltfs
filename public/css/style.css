@@ -1,20 +1,64 @@
-body { margin: 0; }
+/*
+Try a different loader / spinner, there are many lovely bits of CSS animation for free online:
+https://css-loaders.com/
+*/
 
+body { 
+  margin: 0; 
+  font-family: Arial, Helvetica, sans-serif;/*it will try these in order of availability*/
+}
+
+/* This uses flex box styling */
+/* https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_flexible_box_layout/Aligning_items_in_a_flex_container */
 #loading {
-    background-color: rgb(255, 77, 77);
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 99999999999;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-    color: hsl(50, 69%, 82%);
-  }
+  background-color: rgb(255, 0, 0);/*change this color to something you like*/
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99999999999;/*make this sit on top of our three.js scene*/
+  display: flex;/*makes this a flex container so all children are affected*/
+  flex-direction: column;
+  justify-content: center;/*centers horizontally*/
+  align-items: center;/*centers vertically*/
+  text-align: center;
+  color: rgb(255,255,255);
+}
 
-  .hidden {
-    display: none !important;
+/* this will get added to our loading screen to hide it*/
+/*!important overrides any other styling that was before, a useful trick */
+.hidden {
+  /*comment the line below out if you want to change / fix any styling so the visuals don't dissappear so quickly*/
+  display: none !important;
+}
+
+/*style child divs of the loading div*/
+#loading div{
+  display: inline-flex;
+}
+
+/*text that updates with percentage loading*/
+#load-progress{
+  margin-top: 20px;
+}
+
+
+/* HTML: is the index.html to find the loader div*/
+.loader {
+  width: 50px;
+  aspect-ratio: 1;
+  /* line below makes the div round, comment it out, save and run to understand */
+  border-radius: 50%;
+  border: 8px solid;
+  border-color: #ffffff #00000000;/*makes two sides of the circle border white & two black*/
+  animation: l1 1s infinite;/*continual animation*/
+}
+
+/*CSS animations*/
+/*https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_animations/Using_CSS_animations*/
+@keyframes l1 {
+  to{
+    transform: rotate(.5turn)
   }
+}
